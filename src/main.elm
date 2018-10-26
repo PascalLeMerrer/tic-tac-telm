@@ -106,22 +106,32 @@ update : Msg -> Model -> Model
 update message model =
     case message of
         Played cell ->
-            let
-                playedCell =
-                    { cell | isPlayed = True, player = model.currentPlayer }
+            if cell.isPlayed then
+                model 
+            else
+                playCell model cell
 
-                splitIndex = cell.index + 1   
-                newCellList = List.take cell.index model.grid 
-                            ++ [playedCell] 
-                            ++ List.drop splitIndex model.grid
 
-                nextPlayer =
-                    if model.currentPlayer == X then
-                        O
-                    else
-                        X
-            in
-            { model | currentPlayer = nextPlayer, grid = newCellList }
+
+
+playCell: Model -> Cell -> Model
+playCell model cell =
+    let
+        playedCell =
+            { cell | isPlayed = True, player = model.currentPlayer }
+
+        splitIndex = cell.index + 1   
+        newCellList = List.take cell.index model.grid 
+                    ++ [playedCell] 
+                    ++ List.drop splitIndex model.grid
+
+        nextPlayer =
+            if model.currentPlayer == X then
+                O
+            else
+                X
+    in
+    { model | currentPlayer = nextPlayer, grid = newCellList }
 
 
 main =
