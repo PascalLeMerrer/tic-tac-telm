@@ -2,6 +2,7 @@ module TicTacToe exposing
     ( Cell
     , Model
     , Player(..)
+    , hasFilledALine
     , initialModel
     , isGameFinished
     , main
@@ -34,7 +35,7 @@ type alias Row =
 
 
 type alias Model =
-    { grid : List Cell
+    { board : List Cell
     , currentPlayer : Player
     }
 
@@ -46,7 +47,8 @@ type alias Cell =
     }
 
 
-gridSize =
+boardWidth : Int
+boardWidth =
     3
 
 
@@ -54,12 +56,12 @@ initialModel : Model
 initialModel =
     let
         indexes =
-            List.range 0 <| gridSize * gridSize - 1
+            List.range 0 <| boardWidth * boardWidth - 1
 
         cells =
             List.map initCell indexes
     in
-    { grid = cells
+    { board = cells
     , currentPlayer = X
     }
 
@@ -76,9 +78,15 @@ view : Model -> Html Msg
 view model =
     Element.layout [] <|
         column
-            [ centerX, centerY, spacing 10 ]
-            [ column [ spacing 2 ] <| viewGrid model.grid
-            , el [ centerX ] <| text <| viewHelpMessage model.currentPlayer
+            [ centerX
+            , centerY
+            , spacing 10
+            ]
+            [ column [ spacing 2 ] <|
+                viewBoard model.board
+            , el [ centerX ] <|
+                text <|
+                    viewHelpMessage model.currentPlayer
             ]
 
 
@@ -91,14 +99,14 @@ viewHelpMessage player =
         viewPlayer player ++ " should play."
 
 
-viewGrid : List Cell -> List (Element Msg)
-viewGrid grid =
-    if List.isEmpty grid then
+viewBoard : List Cell -> List (Element Msg)
+viewBoard board =
+    if List.isEmpty board then
         [ el [] none ]
 
     else
-        (viewRow <| List.take gridSize grid)
-            :: (viewGrid <| List.drop gridSize grid)
+        (viewRow <| List.take boardWidth board)
+            :: (viewBoard <| List.drop boardWidth board)
 
 
 viewRow : List Cell -> Element Msg
@@ -118,7 +126,8 @@ viewCell cell =
         ]
     <|
         el [ centerX, centerY ] 
-            <| text <| viewPlayer cell.player
+            <| text 
+            <| viewPlayer cell.player
 
 
 viewPlayer : Player -> String
@@ -155,12 +164,12 @@ playCell model cell =
                 cell.index + 1
 
             newCellList =
-                List.take cell.index model.grid
+                List.take cell.index model.board
                     ++ [ playedCell ]
-                    ++ List.drop splitIndex model.grid
+                    ++ List.drop splitIndex model.board
 
             newModel =
-                { model | grid = newCellList }
+                { model | board = newCellList }
         in
         { newModel | currentPlayer = nextPlayer newModel }
 
@@ -179,7 +188,7 @@ nextPlayer model =
 
 isGameFinished : Model -> Bool
 isGameFinished model =
-    List.all .isPlayed model.grid
+    List.all .isPlayed model.board
 
 
 main =

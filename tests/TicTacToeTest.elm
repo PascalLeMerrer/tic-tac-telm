@@ -68,7 +68,7 @@ suite =
                             , { isPlayed = False, player = Nobody, index = 5 }
                             ]
                     in
-                    Expect.equal expectedGrid <| (playCell unfinishedGameModel playedCell).grid
+                    Expect.equal expectedGrid <| (playCell unfinishedGameModel playedCell).board
             , test "should define the next player as nobody when the game is finished" <|
                 \_ ->
                     let
@@ -92,7 +92,7 @@ suite =
 unfinishedGameModel : Model
 unfinishedGameModel =
     let
-        grid =
+        board =
             [ { isPlayed = True, player = X, index = 0 }
             , { isPlayed = True, player = O, index = 1 }
             , { isPlayed = False, player = Nobody, index = 2 }
@@ -101,7 +101,7 @@ unfinishedGameModel =
             , { isPlayed = False, player = Nobody, index = 5 }
             ]
     in
-    { grid = grid
+    { board = board
     , currentPlayer = X
     }
 
@@ -109,7 +109,7 @@ unfinishedGameModel =
 finishedGameModel : Model
 finishedGameModel =
     let
-        grid =
+        board =
             [ { isPlayed = True, player = X, index = 0 }
             , { isPlayed = True, player = O, index = 1 }
             , { isPlayed = True, player = X, index = 2 }
@@ -118,6 +118,6 @@ finishedGameModel =
             , { isPlayed = True, player = O, index = 5 }
             ]
     in
-    { grid = grid
+    { board = board
     , currentPlayer = O
     }
