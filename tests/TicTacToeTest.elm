@@ -3,17 +3,7 @@ module TicTacToeTest exposing (suite)
 import Debug
 import Expect exposing (Expectation)
 import Test exposing (..)
-import TicTacToe
-    exposing
-        ( Cell
-        , Model
-        , Player(..)
-        , initialModel
-        , isGameFinished
-        , main
-        , nextPlayer
-        , playCell
-        )
+import TicTacToe exposing (..)
 
 
 suite : Test
@@ -23,9 +13,29 @@ suite =
             [ test "should detect when the game is not finished" <|
                 \_ ->
                     Expect.equal False <| isGameFinished unfinishedGameModel
-            , test "should detect end of the game" <|
+            , test "should detect end of the game when all cells are played" <|
                 \_ ->
                     Expect.equal True <| isGameFinished finishedGameModel
+            ]
+        , describe "hasFilledALine"
+            [ test "should return true for X when all cells in a row were played by X" <|
+                \_ ->
+                    Expect.equal True <| hasFilledALine X boardWithLineOfX
+            , test "should return false for X when all cells in a row were played by  O" <|
+                \_ ->
+                    Expect.equal False <| hasFilledALine X boardWithLineOfO
+            , test "should return true for O when all cells in a row were played by O" <|
+                \_ ->
+                    Expect.equal True <| hasFilledALine O boardWithLineOfO
+            , test "should return false for O when all cells in a row were played by X" <|
+                \_ ->
+                    Expect.equal False <| hasFilledALine O boardWithLineOfX
+            , test "should return false for O when no player filled a row" <|
+                \_ ->
+                    Expect.equal False <| hasFilledALine O unfinishedGameModel.board
+            , test "should return false for X when no player filled a row" <|
+                \_ ->
+                    Expect.equal False <| hasFilledALine X unfinishedGameModel.board
             ]
         , describe "nextPlayer"
             [ test "should say the next player is O when X is the current one" <|
@@ -121,3 +131,31 @@ finishedGameModel =
     { board = board
     , currentPlayer = O
     }
+
+
+boardWithLineOfX : List Cell
+boardWithLineOfX =
+    [ { isPlayed = True, player = X, index = 0 }
+    , { isPlayed = True, player = O, index = 1 }
+    , { isPlayed = True, player = O, index = 2 }
+    , { isPlayed = True, player = X, index = 3 }
+    , { isPlayed = True, player = X, index = 4 }
+    , { isPlayed = True, player = X, index = 5 }
+    , { isPlayed = True, player = O, index = 6 }
+    , { isPlayed = False, player = Nobody, index = 7 }
+    , { isPlayed = True, player = O, index = 8 }
+    ]
+
+
+boardWithLineOfO : List Cell
+boardWithLineOfO =
+    [ { isPlayed = True, player = X, index = 0 }
+    , { isPlayed = True, player = O, index = 1 }
+    , { isPlayed = True, player = O, index = 2 }
+    , { isPlayed = True, player = X, index = 3 }
+    , { isPlayed = False, player = Nobody, index = 4 }
+    , { isPlayed = True, player = X, index = 5 }
+    , { isPlayed = True, player = O, index = 6 }
+    , { isPlayed = True, player = O, index = 7 }
+    , { isPlayed = True, player = O, index = 8 }
+    ]

@@ -189,6 +189,32 @@ nextPlayer model =
 isGameFinished : Model -> Bool
 isGameFinished model =
     List.all .isPlayed model.board
+        || hasWon X model
+        || hasWon O model
+
+
+hasWon : Player ->  Model -> Bool
+hasWon player model =
+    hasFilledALine player model.board
+
+
+
+-- || hasFilledAColumn player model.board
+-- || hasFilledADiagonal player model.board
+
+
+hasFilledALine : Player -> List Cell -> Bool
+hasFilledALine player board =
+    if List.isEmpty board then
+        False
+
+    else
+        let
+            row =
+                List.take boardWidth board
+        in
+        List.all (\cell -> cell.player == player) row
+            || (hasFilledALine player <| List.drop boardWidth board)
 
 
 main =
