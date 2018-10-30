@@ -1,6 +1,5 @@
 module TicTacToeTest exposing (suite)
 
-import Debug
 import Expect exposing (Expectation)
 import Test exposing (..)
 import TicTacToe exposing (..)
@@ -36,6 +35,26 @@ suite =
             , test "should return false for X when no player filled a row" <|
                 \_ ->
                     Expect.equal False <| hasFilledALine X unfinishedGameModel.board
+            ]
+        , describe "hasFilledAColumn"
+            [ test "should return true for X when all cells in a column were played by X" <|
+                \_ ->
+                    Expect.equal True <| hasFilledAColumn X boardWithColumnOfX
+            , test "should return false for X when all cells in a column were played by  O" <|
+                \_ ->
+                    Expect.equal False <| hasFilledAColumn X boardWithColumnOfO
+            , test "should return true for O when all cells in a column were played by O" <|
+                \_ ->
+                    Expect.equal True <| hasFilledAColumn O boardWithColumnOfO
+            , test "should return false for O when all cells in a column were played by X" <|
+                \_ ->
+                    Expect.equal False <| hasFilledAColumn O boardWithColumnOfX
+            , test "should return false for O when no player filled a column" <|
+                \_ ->
+                    Expect.equal False <| hasFilledAColumn O unfinishedGameModel.board
+            , test "should return false for X when no player filled a column" <|
+                \_ ->
+                    Expect.equal False <| hasFilledAColumn X unfinishedGameModel.board
             ]
         , describe "nextPlayer"
             [ test "should say the next player is O when X is the current one" <|
@@ -158,4 +177,32 @@ boardWithLineOfO =
     , { isPlayed = True, player = O, index = 6 }
     , { isPlayed = True, player = O, index = 7 }
     , { isPlayed = True, player = O, index = 8 }
+    ]
+
+
+boardWithColumnOfO : List Cell
+boardWithColumnOfO =
+    [ { isPlayed = True, player = X, index = 0 }
+    , { isPlayed = True, player = O, index = 1 }
+    , { isPlayed = True, player = O, index = 2 }
+    , { isPlayed = False, player = Nobody, index = 3 }
+    , { isPlayed = True, player = O, index = 4 }
+    , { isPlayed = False, player = Nobody, index = 5 }
+    , { isPlayed = True, player = X, index = 6 }
+    , { isPlayed = True, player = O, index = 7 }
+    , { isPlayed = True, player = X, index = 8 }
+    ]
+
+
+boardWithColumnOfX : List Cell
+boardWithColumnOfX =
+    [ { isPlayed = True, player = X, index = 0 }
+    , { isPlayed = True, player = O, index = 1 }
+    , { isPlayed = True, player = O, index = 2 }
+    , { isPlayed = True, player = X, index = 3 }
+    , { isPlayed = False, player = Nobody, index = 4 }
+    , { isPlayed = False, player = Nobody, index = 5 }
+    , { isPlayed = True, player = X, index = 6 }
+    , { isPlayed = True, player = O, index = 7 }
+    , { isPlayed = True, player = X, index = 8 }
     ]

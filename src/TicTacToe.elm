@@ -2,6 +2,7 @@ module TicTacToe exposing
     ( Cell
     , Model
     , Player(..)
+    , hasFilledAColumn
     , hasFilledALine
     , initialModel
     , isGameFinished
@@ -11,7 +12,6 @@ module TicTacToe exposing
     )
 
 import Browser
-import Debug
 import Dict exposing (Dict)
 import Element exposing (..)
 import Element.Background as Background
@@ -52,12 +52,13 @@ boardWidth =
     3
 
 
+indexes =
+    List.range 0 <| boardWidth * boardWidth - 1
+
+
 initialModel : Model
 initialModel =
     let
-        indexes =
-            List.range 0 <| boardWidth * boardWidth - 1
-
         cells =
             List.map initCell indexes
     in
@@ -125,9 +126,9 @@ viewCell cell =
         , Border.rounded 5
         ]
     <|
-        el [ centerX, centerY ] 
-            <| text 
-            <| viewPlayer cell.player
+        el [ centerX, centerY ] <|
+            text <|
+                viewPlayer cell.player
 
 
 viewPlayer : Player -> String
@@ -193,13 +194,13 @@ isGameFinished model =
         || hasWon O model
 
 
-hasWon : Player ->  Model -> Bool
+hasWon : Player -> Model -> Bool
 hasWon player model =
     hasFilledALine player model.board
+        || hasFilledAColumn player model.board
 
 
 
--- || hasFilledAColumn player model.board
 -- || hasFilledADiagonal player model.board
 
 
@@ -215,6 +216,27 @@ hasFilledALine player board =
         in
         List.all (\cell -> cell.player == player) row
             || (hasFilledALine player <| List.drop boardWidth board)
+
+
+columnIndexes =
+    List.range 0 (boardWidth - 1)
+
+
+hasFilledAColumn : Player -> List Cell -> Bool
+hasFilledAColumn player board =
+    List.map (\index -> isColumnBelongingTo player board index) columnIndexes
+        |> List.any (\result -> result)
+
+
+isColumnBelongingTo : Player -> List Cell -> Int -> Bool
+isColumnBelongingTo player board columnIndex =
+    List.filter (\cell -> isCellInColumn cell columnIndex) board
+        |> List.all (\cell -> cell.player == player)
+
+
+isCellInColumn : Cell -> Int -> Bool
+isCellInColumn cell columnIndex =
+    columnIndex == cell.index || columnIndex == modBy boardWidth cell.index
 
 
 main =
