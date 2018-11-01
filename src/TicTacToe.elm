@@ -80,35 +80,39 @@ initCell index =
 
 view : Model -> Html Msg
 view model =
-    Element.layout [] <|
+    Element.layout
+        [ Background.color <| rgb 0.5 0.5 0.5
+        ]
+    <|
         column
             [ centerX
             , centerY
             , spacing 10
             ]
-            [ column [ spacing 2 ] <|
-                viewBoard model.board
-            , el [ centerX ] <|
-                text <|
-                    viewStatusMessage model
+            [ column
+                [ spacing 2
+                ]
+                <| viewBoard model.board
+            , el [ centerX ] 
+                <| text
+                    <| viewStatusMessage model
             ]
 
 
 viewStatusMessage : Model -> String
 viewStatusMessage model =
     if model.isGameFinished then
-        
-            if hasWon X model then
-                "X won!"
+        if hasWon X model then
+            "X won!"
 
-            else if hasWon O model then
-                "O won!"
-
-            else
-                "Game over."
+        else if hasWon O model then
+            "O won!"
 
         else
-            viewPlayer model.currentPlayer ++ " should play."
+            "Game over."
+
+    else
+        viewPlayer model.currentPlayer ++ " should play."
 
 
 viewBoard : List Cell -> List (Element Msg)
@@ -135,6 +139,8 @@ viewCell cell =
         , height <| px 50
         , width <| px 50
         , Border.rounded 5
+        , Border.color <| rgb 1 1 1
+        , Border.width 1
         ]
     <|
         el [ centerX, centerY ] <|
@@ -162,7 +168,6 @@ update message model =
             let
                 newModel =
                     playCell model cell
-                
             in
             { newModel | isGameFinished = isGameFinished newModel }
 
