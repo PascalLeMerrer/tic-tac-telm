@@ -19,11 +19,13 @@ import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
 import Element.Font as Font
+import Element.Input as Input
 import Html exposing (Html)
 
 
 type Msg
     = Played Cell
+    | PlayAgain
 
 
 type Player
@@ -95,7 +97,11 @@ view model =
                 ]
               <|
                 viewBoard model.board
-            , el [ centerX ] <|
+            , el
+                [ centerX
+                , below <| el [centerX] <| viewPlayAgainButton model
+                ]
+              <|
                 text <|
                     viewStatusMessage model
             ]
@@ -167,6 +173,7 @@ viewCell cell =
         , Border.rounded 5
         , Border.color <| rgb 1 1 1
         , Border.width 1
+        , pointer
         ]
     <|
         el [ centerX, centerY ] <|
@@ -187,6 +194,25 @@ viewPlayer player =
             "•"
 
 
+viewPlayAgainButton : Model -> Element Msg
+viewPlayAgainButton model =
+    if model.isGameFinished then
+        Input.button
+            [ Background.color <| rgb 0 0 0
+            , Font.color <| rgb 1 1 1
+            , padding 10
+            , Border.rounded 5
+            , Border.color <| rgb 0 0 0
+            , Border.width 1
+            ]
+            { onPress = Just PlayAgain
+            , label = text "Play again"
+            }
+
+    else
+        none
+
+
 update : Msg -> Model -> Model
 update message model =
     case message of
@@ -196,6 +222,10 @@ update message model =
                     playCell model cell
             in
             { newModel | isGameFinished = isGameFinished newModel }
+
+        PlayAgain ->
+            -- TODO change player
+            initialModel
 
 
 playCell : Model -> Cell -> Model
