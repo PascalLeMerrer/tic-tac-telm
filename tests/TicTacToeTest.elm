@@ -162,6 +162,7 @@ unfinishedGameModel =
     in
     { board = board
     , currentPlayer = X
+    , isGameFinished = False
     }
 
 
@@ -182,6 +183,7 @@ finishedGameModel =
     in
     { board = board
     , currentPlayer = O
+    , isGameFinished = True
     }
 
 

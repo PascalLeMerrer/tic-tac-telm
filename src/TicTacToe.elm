@@ -38,6 +38,7 @@ type alias Row =
 type alias Model =
     { board : List Cell --TODO replace with an Array of Cells
     , currentPlayer : Player
+    , isGameFinished : Bool
     }
 
 
@@ -65,6 +66,7 @@ initialModel =
     in
     { board = cells
     , currentPlayer = X
+    , isGameFinished = False
     }
 
 
@@ -94,15 +96,18 @@ view model =
 
 viewStatusMessage : Model -> String
 viewStatusMessage model =
-    case model.currentPlayer of 
-        Nobody ->
+    if model.isGameFinished then
+        
             if hasWon X model then
                 "X won!"
+
             else if hasWon O model then
                 "O won!"
+
             else
                 "Game over."
-        _ ->
+
+        else
             viewPlayer model.currentPlayer ++ " should play."
 
 
@@ -149,11 +154,17 @@ viewPlayer player =
         Nobody ->
             "•"
 
+
 update : Msg -> Model -> Model
 update message model =
     case message of
         Played cell ->
-            playCell model cell
+            let
+                newModel =
+                    playCell model cell
+                
+            in
+            { newModel | isGameFinished = isGameFinished newModel }
 
 
 playCell : Model -> Cell -> Model
