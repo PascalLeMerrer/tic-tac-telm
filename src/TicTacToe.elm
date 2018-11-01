@@ -432,16 +432,19 @@ topRightDownLeftDiagonalCells board cellToKeepIndex =
 
 
 {--
-0 1 2
-3 4 5 + boardWidth + 1
-6 7 8
 
+0 1 2
+3 4 5 
+6 7 8
+Diagonal1 = 0/4/8 ==> + boardWidth + 1 to get next cell Id
+Diagonal2 = 2/4/6 ==> +  boardWidth - 1 to get next cell Id, as long as you exclude the last cell of the grid (bottom right cell)
+It works on a bigger grid
  0  1  2  3
  4  5  6  7
  8  9 10 11
 12 13 14 15
  
-+  boardWidth - 1
+
 
 --}
 
