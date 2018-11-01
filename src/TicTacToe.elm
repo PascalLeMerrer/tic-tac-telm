@@ -18,6 +18,7 @@ import Element exposing (..)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
+import Element.Font as Font
 import Html exposing (Html)
 
 
@@ -92,10 +93,11 @@ view model =
             [ column
                 [ spacing 2
                 ]
-                <| viewBoard model.board
-            , el [ centerX ] 
-                <| text
-                    <| viewStatusMessage model
+              <|
+                viewBoard model.board
+            , el [ centerX ] <|
+                text <|
+                    viewStatusMessage model
             ]
 
 
@@ -133,9 +135,33 @@ viewRow cellRow =
 
 viewCell : Cell -> Element Msg
 viewCell cell =
+    let
+        backgroundColor =
+            case cell.player of
+                X ->
+                    rgb 0.2 0.2 0.2
+
+                O ->
+                    rgb 0.8 0.8 0.8
+
+                _ ->
+                    rgb 0.5 0.5 0.5
+
+        frontColor =
+            case cell.player of
+                X ->
+                    rgb 0.8 0.8 0.8
+
+                O ->
+                    rgb 0.2 0.2 0.2
+
+                _ ->
+                    rgb 0 0 0
+    in
     el
         [ onClick <| Played cell
-        , Background.color (rgb 0.5 0.5 0.5)
+        , Background.color backgroundColor
+        , Font.color frontColor
         , height <| px 50
         , width <| px 50
         , Border.rounded 5
