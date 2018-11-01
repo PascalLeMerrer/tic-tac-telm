@@ -8,13 +8,13 @@ import TicTacToe exposing (..)
 suite : Test
 suite =
     describe "The tic tac toe game"
-        [ describe "is game finished"
+        [ describe "allCellPlayed"
             [ test "should detect when the game is not finished" <|
                 \_ ->
-                    Expect.equal False <| isGameFinished unfinishedGameModel
+                    Expect.equal False <| allCellPlayed unfinishedGameModel
             , test "should detect end of the game when all cells are played" <|
                 \_ ->
-                    Expect.equal True <| isGameFinished finishedGameModel
+                    Expect.equal True <| allCellPlayed finishedGameModel
             ]
         , describe "hasFilledALine"
             [ test "should return true for X when all cells in a row were played by X" <|
@@ -163,6 +163,8 @@ unfinishedGameModel =
     { board = board
     , currentPlayer = X
     , isGameFinished = False
+    , winner = Nobody
+    , firstPlayer = X
     }
 
 
@@ -184,6 +186,8 @@ finishedGameModel =
     { board = board
     , currentPlayer = O
     , isGameFinished = True
+    , winner = X
+    , firstPlayer = X
     }
 
 

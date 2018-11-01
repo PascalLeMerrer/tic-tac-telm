@@ -2,11 +2,11 @@ module TicTacToe exposing
     ( Cell
     , Model
     , Player(..)
+    , allCellPlayed
     , hasFilledAColumn
     , hasFilledADiagonal
     , hasFilledALine
     , initialModel
-    , isGameFinished
     , main
     , nextPlayer
     , playCell
@@ -42,6 +42,8 @@ type alias Model =
     { board : List Cell --TODO replace with an Array of Cells
     , currentPlayer : Player
     , isGameFinished : Bool
+    , winner : Player
+    , firstPlayer : Player
     }
 
 
@@ -70,6 +72,8 @@ initialModel =
     { board = cells
     , currentPlayer = X
     , isGameFinished = False
+    , winner = Nobody
+    , firstPlayer = X
     }
 
 
@@ -90,16 +94,17 @@ view model =
         column
             [ centerX
             , centerY
-            , spacing 10
             ]
             [ column
                 [ spacing 2
+                , centerX
                 ]
               <|
                 viewBoard model.board
             , el
-                [ centerX
-                , below <| el [centerX] <| viewPlayAgainButton model
+                [ padding 20
+                , centerX
+                , below <| el [ centerX ] <| viewPlayAgainButton model
                 ]
               <|
                 text <|
@@ -110,10 +115,10 @@ view model =
 viewStatusMessage : Model -> String
 viewStatusMessage model =
     if model.isGameFinished then
-        if hasWon X model then
+        if model.winner == X then
             "X won!"
 
-        else if hasWon O model then
+        else if model.winner == O then
             "O won!"
 
         else
@@ -220,12 +225,51 @@ update message model =
             let
                 newModel =
                     playCell model cell
+
+                isXWinner =
+                    hasWon X newModel
+
+                isOWinner =
+                    hasWon O newModel
+
+                winner =
+                    if isXWinner then
+                        X
+
+                    else if isOWinner then
+                        O
+
+                    else
+                        Nobody
+
+                isGameFinished =
+                    allCellPlayed newModel
+                        || isXWinner
+                        || isOWinner
             in
-            { newModel | isGameFinished = isGameFinished newModel }
+            { newModel
+                | isGameFinished = isGameFinished
+                , winner = winner
+            }
 
         PlayAgain ->
-            -- TODO change player
-            initialModel
+            case model.winner of
+                X ->
+                    { initialModel | currentPlayer = O }
+
+                O ->
+                    { initialModel | currentPlayer = X }
+
+                Nobody ->
+                    let
+                        firstPlayer =
+                            if model.firstPlayer == X then
+                                O
+
+                            else
+                                X
+                    in
+                    { initialModel | currentPlayer = firstPlayer, firstPlayer = firstPlayer }
 
 
 playCell : Model -> Cell -> Model
@@ -254,7 +298,7 @@ playCell model cell =
 
 nextPlayer : Model -> Player
 nextPlayer model =
-    if isGameFinished model then
+    if allCellPlayed model then
         Nobody
 
     else if model.currentPlayer == X then
@@ -264,11 +308,9 @@ nextPlayer model =
         X
 
 
-isGameFinished : Model -> Bool
-isGameFinished model =
+allCellPlayed : Model -> Bool
+allCellPlayed model =
     List.all .isPlayed model.board
-        || hasWon X model
-        || hasWon O model
 
 
 hasWon : Player -> Model -> Bool
