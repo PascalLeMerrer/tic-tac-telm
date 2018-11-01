@@ -33,11 +33,6 @@ type Player
     | O
     | Nobody
 
-
-type alias Row =
-    List Cell
-
-
 type alias Model =
     { board : List Cell --TODO replace with an Array of Cells
     , currentPlayer : Player
