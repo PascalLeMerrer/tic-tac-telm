@@ -88,17 +88,22 @@ view model =
                 viewBoard model.board
             , el [ centerX ] <|
                 text <|
-                    viewHelpMessage model.currentPlayer
+                    viewStatusMessage model
             ]
 
 
-viewHelpMessage : Player -> String
-viewHelpMessage player =
-    if player == Nobody then
-        "Game over."
-
-    else
-        viewPlayer player ++ " should play."
+viewStatusMessage : Model -> String
+viewStatusMessage model =
+    case model.currentPlayer of 
+        Nobody ->
+            if hasWon X model then
+                "X won!"
+            else if hasWon O model then
+                "O won!"
+            else
+                "Game over."
+        _ ->
+            viewPlayer model.currentPlayer ++ " should play."
 
 
 viewBoard : List Cell -> List (Element Msg)
@@ -143,7 +148,6 @@ viewPlayer player =
 
         Nobody ->
             "•"
-
 
 update : Msg -> Model -> Model
 update message model =
