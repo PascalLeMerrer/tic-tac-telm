@@ -3,6 +3,7 @@ module TicTacToe exposing
     , Model
     , Player(..)
     , hasFilledAColumn
+    , hasFilledADiagonal
     , hasFilledALine
     , initialModel
     , isGameFinished
@@ -35,7 +36,7 @@ type alias Row =
 
 
 type alias Model =
-    { board : List Cell
+    { board : List Cell --TODO replace with an Array of Cells
     , currentPlayer : Player
     }
 
@@ -198,10 +199,7 @@ hasWon : Player -> Model -> Bool
 hasWon player model =
     hasFilledALine player model.board
         || hasFilledAColumn player model.board
-
-
-
--- || hasFilledADiagonal player model.board
+        || hasFilledADiagonal player model.board
 
 
 hasFilledALine : Player -> List Cell -> Bool
@@ -237,6 +235,97 @@ isColumnBelongingTo player board columnIndex =
 isCellInColumn : Cell -> Int -> Bool
 isCellInColumn cell columnIndex =
     columnIndex == cell.index || columnIndex == modBy boardWidth cell.index
+
+
+hasFilledADiagonal : Player -> List Cell -> Bool
+hasFilledADiagonal player board =
+    let
+        hasFilledFirstDiagonal =
+            topLeftDownRightDiagonalCells board 0
+                |> List.all (\cell -> cell.player == player)
+
+        topRightCellIndex =
+            boardWidth - 1
+
+        hasFilledSecondDiagonal =
+            topRightDownLeftDiagonalCells (List.drop topRightCellIndex board) topRightCellIndex
+                |> List.all (\cell -> cell.player == player)
+    in
+    hasFilledFirstDiagonal || hasFilledSecondDiagonal
+
+
+topLeftDownRightDiagonalCells : List Cell -> Int -> List Cell
+topLeftDownRightDiagonalCells board cellToKeepIndex =
+    let
+        head =
+            List.head board
+    in
+    case head of
+        Just cell ->
+            let
+                nextCellsInDiagonal =
+                    topLeftDownRightDiagonalCells (List.drop (boardWidth + 1) board) (cellToKeepIndex + boardWidth + 1)
+            in
+            if cell.index == cellToKeepIndex then
+                cell :: nextCellsInDiagonal
+
+            else
+                nextCellsInDiagonal
+
+        Nothing ->
+            []
+
+
+topRightDownLeftDiagonalCells : List Cell -> Int -> List Cell
+topRightDownLeftDiagonalCells board cellToKeepIndex =
+    let
+        head =
+            List.head board
+    in
+    case head of
+        Just cell ->
+            let
+                remainingCells =
+                    --List.drop boardWidth board
+                    List.drop 1 board
+
+                nextDiagonalCellIndex =
+                    if isNotLastCellOfBoard && cell.index == cellToKeepIndex then
+                        cellToKeepIndex + boardWidth - 1
+
+                    else
+                        cellToKeepIndex
+
+                nextCellsInDiagonal =
+                    topRightDownLeftDiagonalCells remainingCells nextDiagonalCellIndex
+
+                isNotLastCellOfBoard =
+                    cellToKeepIndex /= List.length indexes - 1
+            in
+            if isNotLastCellOfBoard && cell.index == cellToKeepIndex then
+                cell :: nextCellsInDiagonal
+
+            else
+                nextCellsInDiagonal
+
+        Nothing ->
+            []
+
+
+
+{--
+0 1 2
+3 4 5 + boardWidth + 1
+6 7 8
+
+ 0  1  2  3
+ 4  5  6  7
+ 8  9 10 11
+12 13 14 15
+ 
++  boardWidth - 1
+
+--}
 
 
 main =

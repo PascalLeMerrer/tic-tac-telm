@@ -56,6 +56,26 @@ suite =
                 \_ ->
                     Expect.equal False <| hasFilledAColumn X unfinishedGameModel.board
             ]
+        , describe "hasFilledADiagonal"
+            [ test "should return true for X when all cells in a diagonal were played by X" <|
+                \_ ->
+                    Expect.equal True <| hasFilledADiagonal X boardWithDiagonalOfX
+            , test "should return false for X when all cells in a diagonal were played by  O" <|
+                \_ ->
+                    Expect.equal False <| hasFilledADiagonal X boardWithDiagonalOfO
+            , test "should return true for O when all cells in a diagonal were played by O" <|
+                \_ ->
+                    Expect.equal True <| hasFilledADiagonal O boardWithDiagonalOfO
+            , test "should return false for O when all cells in a diagonal were played by X" <|
+                \_ ->
+                    Expect.equal False <| hasFilledADiagonal O boardWithDiagonalOfX
+            , test "should return false for O when O did not fill a diagonal" <|
+                \_ ->
+                    Expect.equal False <| hasFilledADiagonal O unfinishedGameModel.board
+            , test "should return false for X when X did not fill a diagonal" <|
+                \_ ->
+                    Expect.equal False <| hasFilledADiagonal X unfinishedGameModel.board
+            ]
         , describe "nextPlayer"
             [ test "should say the next player is O when X is the current one" <|
                 \_ ->
@@ -95,23 +115,30 @@ suite =
                             , { isPlayed = True, player = O, index = 3 }
                             , { isPlayed = True, player = X, index = 4 }
                             , { isPlayed = False, player = Nobody, index = 5 }
+                            , { isPlayed = False, player = Nobody, index = 6 }
+                            , { isPlayed = False, player = Nobody, index = 7 }
+                            , { isPlayed = False, player = Nobody, index = 8 }
                             ]
                     in
                     Expect.equal expectedGrid <| (playCell unfinishedGameModel playedCell).board
             , test "should define the next player as nobody when the game is finished" <|
                 \_ ->
+                    -- TODO if playCell args were cell model This function could use pipes
                     let
-                        playedCell1 =
-                            { isPlayed = False, player = Nobody, index = 2 }
+                        model2 =
+                            playCell unfinishedGameModel { isPlayed = False, player = Nobody, index = 2 }
 
-                        playedCell2 =
-                            { isPlayed = False, player = Nobody, index = 5 }
+                        model5 =
+                            playCell model2 { isPlayed = False, player = Nobody, index = 5 }
 
-                        intermediateGameModel =
-                            playCell unfinishedGameModel playedCell1
+                        model6 =
+                            playCell model5 { isPlayed = False, player = Nobody, index = 6 }
+
+                        model7 =
+                            playCell model6 { isPlayed = False, player = Nobody, index = 7 }
 
                         finalGameModel =
-                            playCell intermediateGameModel playedCell2
+                            playCell model7 { isPlayed = False, player = Nobody, index = 8 }
                     in
                     Expect.equal Nobody <| finalGameModel.currentPlayer
             ]
@@ -128,6 +155,9 @@ unfinishedGameModel =
             , { isPlayed = True, player = O, index = 3 }
             , { isPlayed = True, player = X, index = 4 }
             , { isPlayed = False, player = Nobody, index = 5 }
+            , { isPlayed = False, player = Nobody, index = 6 }
+            , { isPlayed = False, player = Nobody, index = 7 }
+            , { isPlayed = False, player = Nobody, index = 8 }
             ]
     in
     { board = board
@@ -145,6 +175,9 @@ finishedGameModel =
             , { isPlayed = True, player = O, index = 3 }
             , { isPlayed = True, player = X, index = 4 }
             , { isPlayed = True, player = O, index = 5 }
+            , { isPlayed = True, player = X, index = 6 }
+            , { isPlayed = True, player = O, index = 7 }
+            , { isPlayed = True, player = X, index = 8 }
             ]
     in
     { board = board
@@ -205,4 +238,32 @@ boardWithColumnOfX =
     , { isPlayed = True, player = X, index = 6 }
     , { isPlayed = True, player = O, index = 7 }
     , { isPlayed = True, player = X, index = 8 }
+    ]
+
+
+boardWithDiagonalOfO : List Cell
+boardWithDiagonalOfO =
+    [ { isPlayed = True, player = O, index = 0 }
+    , { isPlayed = False, player = Nobody, index = 1 }
+    , { isPlayed = True, player = X, index = 2 }
+    , { isPlayed = False, player = Nobody, index = 3 }
+    , { isPlayed = True, player = O, index = 4 }
+    , { isPlayed = False, player = Nobody, index = 5 }
+    , { isPlayed = True, player = X, index = 6 }
+    , { isPlayed = False, player = Nobody, index = 7 }
+    , { isPlayed = True, player = O, index = 8 }
+    ]
+
+
+boardWithDiagonalOfX : List Cell
+boardWithDiagonalOfX =
+    [ { isPlayed = True, player = O, index = 0 }
+    , { isPlayed = False, player = Nobody, index = 1 }
+    , { isPlayed = True, player = X, index = 2 }
+    , { isPlayed = False, player = Nobody, index = 3 }
+    , { isPlayed = True, player = X, index = 4 }
+    , { isPlayed = False, player = Nobody, index = 5 }
+    , { isPlayed = True, player = X, index = 6 }
+    , { isPlayed = False, player = Nobody, index = 7 }
+    , { isPlayed = True, player = O, index = 8 }
     ]
