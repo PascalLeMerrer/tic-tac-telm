@@ -33,6 +33,7 @@ type Player
     | O
     | Nobody
 
+
 type alias Model =
     { board : List Cell --TODO replace with an Array of Cells
     , currentPlayer : Player
@@ -399,7 +400,6 @@ topRightDownLeftDiagonalCells board cellToKeepIndex =
         Just cell ->
             let
                 remainingCells =
-                    --List.drop boardWidth board
                     List.drop 1 board
 
                 nextDiagonalCellIndex =
@@ -439,8 +439,6 @@ It works on a bigger grid
  8  9 10 11
 12 13 14 15
  
-
-
 --}
 
 
